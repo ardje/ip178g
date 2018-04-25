@@ -99,6 +99,12 @@ static int icplus_IP178G_probe(struct phy_device *phydev)
     return err;
 }
 
+static void icplus_IP178G_remove(struct phy_device *phydev)
+{
+    /* Remove our file access */
+    device_remove_groups(&phydev->mdio.dev,switch_groups);
+}
+
 /* PHY Driver */
 static struct phy_driver icplus_IP178G_driver = {
     .phy_id     = 0x02430d80,
@@ -109,6 +115,7 @@ static struct phy_driver icplus_IP178G_driver = {
     .probe      = icplus_IP178G_probe,
     .config_aneg    = genphy_config_aneg,
     .read_status    = genphy_read_status,
+    .remove = icplus_IP178G_remove,
     /*.driver     = { .owner = THIS_MODULE },*/
 };
 /*Switch initialize function */
