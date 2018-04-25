@@ -83,10 +83,10 @@ static int icplus_IP178G_probe(struct phy_device *phydev)
     err=0;
     for(i=0;i<32;i++) {
 	int d=mdiobus_read(phydev->mdio.bus, i, 2);
-        if (d != 0xffff) {
-          if ((i >7 && i<20) ||i>24 || (i<8 && data != 0x243)) err|=1;
-	} else {
+        if (d == 0xffff) {
           if (i <8 || (i>19 && i<25)) err|=1;
+	} else {
+          if ((i >7 && i<20) ||i>24 || (i<8 && d != 0x243)) err|=1;
 	}
     }
 
