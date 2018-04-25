@@ -33,6 +33,7 @@ static ssize_t  switch_conf_store(struct device *dev, struct device_attribute *a
         const char *buffer, size_t size)
 {
     u32 value;
+    int phy_id;
     struct phy_device *phydev = to_phy_device(dev);
     u32 reg_num = 0;
     sscanf(buffer, "%x", &value);
@@ -70,6 +71,7 @@ static struct attribute_group attr_group_switch = {
 static int icplus_IP178G_probe(struct phy_device *phydev)
 {
     int err = 0;
+    int i;
 
     pr_debug("mdio/phy sub system detected undetermined IC Plus switch\n");
     pr_debug("switch id is %04x%04x @ %s:%d\n", mdiobus_read(phydev->mdio.bus, phydev->mdio.addr, 0x2), mdiobus_read(phydev->mdio.bus, phydev->mdio.addr, 0x03),phydev->mdio.bus->name,phydev->mdio.addr);
@@ -80,11 +82,12 @@ static int icplus_IP178G_probe(struct phy_device *phydev)
     */
     err=0;
     for(i=0;i<32;i++) {
-	local int d=mdiobus_read(phydev->mdio.bus, i, 2);
-        if (d != 0xffff)
+	int d=mdiobus_read(phydev->mdio.bus, i, 2);
+        if (d != 0xffff) {
           if ((i >7 && i<20) ||i>24 || (i<8 && data != 0x243)) err|=1;
-	else
+	} else {
           if (i <8 || (i>19 && i<25)) err|=1;
+	}
     }
 
     if(err) {
